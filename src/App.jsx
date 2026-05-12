@@ -54,7 +54,7 @@ export default function GymAgent() {
           "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "mixtral-8x7b-32768",
           max_tokens: 1000,
           messages: [
             { role: "system", content: systemPrompt },
