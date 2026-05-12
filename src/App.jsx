@@ -47,19 +47,24 @@ export default function GymAgent() {
         content: m.content,
       }));
 
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+        },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "gpt-3.5-turbo",
           max_tokens: 1000,
-          system: systemPrompt,
-          messages: apiMessages,
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...apiMessages,
+          ],
         }),
       });
 
       const data = await response.json();
-      const reply = data.content?.map((b) => b.text || "").join("\n") || "No pude generar una respuesta.";
+      const reply = data.choices?.[0]?.message?.content || "No pude generar una respuesta.";
       setMessages([...newMessages, { role: "assistant", content: reply }]);
     } catch {
       setMessages([...newMessages, { role: "assistant", content: "Hubo un error. Intentá de nuevo 🙏" }]);
